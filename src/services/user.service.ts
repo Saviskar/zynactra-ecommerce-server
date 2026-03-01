@@ -19,7 +19,6 @@ export class UserService {
 
         const newUser = await UserRepository.create({
             email: data.email,
-            name: data.name,
             password_hash
         });
 

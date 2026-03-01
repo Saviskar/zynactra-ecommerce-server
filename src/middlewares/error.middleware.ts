@@ -16,7 +16,9 @@ export const errorHandler = (
         message = err.message;
         errorCode = err.errorCode || 'APP_ERROR';
     } else {
-        console.error('Unhandled Error:', err);
+        console.error('Unhandled Error:', err.message);
+        console.error(err.stack);
+        message = err.message || 'Internal Server Error';
     }
 
     res.status(statusCode).json({
