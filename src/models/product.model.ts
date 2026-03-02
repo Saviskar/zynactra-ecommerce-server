@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export interface Product {
-    id: number;
+    id: string;
     name: string;
     description: string;
     price: number; // Stored as a decimal or numeric in DB, but represented as a number here
-    stock_quantity: number;
+    stock_qty: number;
     category_id?: number;
     created_at: Date;
     updated_at: Date;
