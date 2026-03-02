@@ -4,12 +4,12 @@ import { OrderRepository } from '../repositories/order.repository';
 import { AppError } from '../utils/AppError';
 
 interface CheckoutItem {
-    product_id: number;
+    product_id: string;
     quantity: number;
 }
 
 export class CheckoutService {
-    static async processCheckout(userId: number, items: CheckoutItem[]) {
+    static async processCheckout(userId: string, items: CheckoutItem[]) {
         // Start a database transaction
         const trx = await db.transaction();
 
@@ -29,7 +29,7 @@ export class CheckoutService {
                     throw new AppError(`Product with ID ${item.product_id} not found`, 404, 'PRODUCT_NOT_FOUND');
                 }
 
-                if (product.stock_quantity < item.quantity) {
+                if (product.stock_qty < item.quantity) {
                     throw new AppError(`Insufficient stock for product ${product.name}`, 400, 'INSUFFICIENT_STOCK');
                 }
 
@@ -43,15 +43,15 @@ export class CheckoutService {
                 orderItemsToCreate.push({
                     product_id: item.product_id,
                     quantity: item.quantity,
-                    price_at_purchase: Number(product.price)
+                    unit_price_at_purchase: Number(product.price),
+                    line_total: itemTotal
                 });
             }
 
             // 2. Create the Order
             const newOrder = await OrderRepository.createOrder({
                 user_id: userId,
-                total_amount: totalAmount,
-                status: 'COMPLETED' // Simplified for this example; in a real app this might be PENDING until payment
+                status: 'placed'
             }, trx);
 
             // 3. Create Order Items
